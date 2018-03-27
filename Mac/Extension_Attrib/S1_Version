@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+if [[ -f "/usr/local/bin/sentinelctl" ]]; then
+    echo "<result>$(/usr/local/bin/sentinelctl version)</result>"
+else
+    echo "<result>Not Installed</result>"
+fi
