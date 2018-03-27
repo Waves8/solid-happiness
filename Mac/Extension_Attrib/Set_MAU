@@ -1,0 +1,24 @@
+#!/bin/bash
+
+echo "Getting logged in user..."
+
+loggedInUser=`/bin/ls -l /dev/console | /usr/bin/awk '{ print $3 }'`
+
+echo "Checking for com.microsoft.autoupdate2.plist..."
+
+if [[ -f "/Users/$loggedInUser/Library/Preferences/com.microsoft.autoupdate2.plist" ]]; then
+  echo "plist found, getting HowToCheck..."
+  howToCheck=`defaults read /Users/$loggedInUser/Library/Preferences/com.microsoft.autoupdate2.plist HowToCheck`
+  if [[ $howToCheck != "AutomaticDownload" ]]; then
+    echo "plist present, setting AutomaticDownload..."
+    defaults write /Users/$loggedInUser/Library/Preferences/com.microsoft.autoupdate2.plist HowToCheck -string "AutomaticDownload"
+    # Prior command changes ownership, need to reset ownership
+    chown $loggedInUser:staff /Users/$loggedInUser/Library/Preferences/com.microsoft.autoupdate2.plist
+    echo "Updating inventory..."
+    jamf recon
+  else
+    echo "Already set to AutomaticDownload"
+  fi
+else
+    echo "com.microsoft.autoupdate2.plist not found"
+fi
