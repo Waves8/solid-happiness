@@ -1,0 +1,8 @@
+# No need to use fully qualified names
+sed 's/use_fully_qualified_names = True/use_fully_qualified_names = False/' /etc/sssd/sssd.conf
+# Update homedir to not include domain
+sed 's|fallback_homedir = /home/%u@%d|fallback_homedir = /home/%u|' /etc/sssd/sssd.conf
+# Change access_provider to simple
+sed 's/access_provider = ad/access_provider = simple/' /etc/sssd/sssd.conf
+# Append a simple_allow_group for login
+printf "simple_allow_groups = GROUPNAME" >> /etc/sssd/sssd.conf
