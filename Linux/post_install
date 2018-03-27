@@ -1,1 +1,250 @@
+#!/bin/bash
 
+# this is a post install setup script
+# install the base packages for
+#  joining the domain
+#  managing selinux via policycoreutils
+# join the server to the domain
+
+# Notes to myself on using set and trap and etc since I don't fully understand why/where/when
+# http://mywiki.wooledge.org/BashFAQ/105
+# "https://stackoverflow.com/questions/35800082/how-to-trap-err-when-using-set-e-in-bash"
+# set -E
+trap '[ "$?" -ne 77 ] || exit 77' ERR
+
+clear
+printf "\n"
+if [ "$(whoami)" != 'root' ]
+  then
+    echo "You will not be able to run $0 as non-root user."
+    exit 77
+fi
+
+echo "Checking to make sure none of these packages are already installed."
+
+SSSD=$(rpm -qa | grep sssd)
+REALMD=$(rpm -qa | grep realmd)
+ODDJOB=$(rpm -qa | grep ^oddjob\\S[0-9])
+ODDJOBMK=$(rpm -qa | grep oddjob-mkhomedir)
+ADCLI=$(rpm -qa | grep adcli)
+SAMBACM=$(rpm -qa | grep samba-common)
+SAMBACMT=$(rpm -qa | grep samba-common-tools)
+POLICYCORE=$(rpm -qa | grep policycoreutils-python)
+KRB5=$(rpm -qa | grep krb5-workstation)
+OPENLDAP=$(rpm -qa | grep openldap-clients)
+TEMPFILE=/tmp/$$.tmp
+echo 0 > $TEMPFILE
+
+echo "Here are the installation statuses:"
+COUNTER=0
+INSTALLED=0
+while [ $COUNTER -ne 10 ]; do
+  if [ $(rpm -qa | grep sssd) ]
+    then
+      echo "sssd version: $SSSD"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "sssd not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep realmd) ]
+    then
+      echo "realmd version: $REALMD"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "realmd not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep ^oddjob\\S[0-9]) ]
+    then
+      echo "oddjob version: $ODDJOB"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "oddjob not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep oddjob-mkhomedir) ]
+    then
+      echo "oddjob-mkhomedir version: $ODDJOBMK"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "oddjob-mkhomedir not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep adcli) ]
+    then
+      echo "adcli version: $adcli"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "adcli not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep samba-common) ]
+    then
+      echo "samba-common version: $SAMBACM"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "samba-common not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep samba-common-tools) ]
+    then
+      echo "samba-common-tools version: $SAMBACMT"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "samba-common-tools not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep policycoreutils-python) ]
+    then
+      echo "policycoreutils-python version: $POLICYCORE"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "policycoreutils-python not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep krb5-workstation) ]
+    then
+      echo "krb5-workstation version: $KRB5"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "krb5-workstation not installed"
+  fi
+  let COUNTER++
+  echo ""
+  if [ $(rpm -qa | grep openldap-clients) ]
+    then
+      echo "openldap-clients version: $OPENLDAP"
+      INSTALLED=$[$(cat $TEMPFILE) + 1]
+      echo $INSTALLED > $TEMPFILE
+    else
+      echo "openldap-clients not installed"
+  fi
+  let COUNTER++
+  echo ""
+done
+
+if [ $(cat $TEMPFILE) -eq 0 ]
+  then
+    echo "No packages installed, continuing..."
+  else
+    echo "You have $(cat $TEMPFILE) packages already installed."
+    # Why am I exiting here, and why am I forcing (myself) to manually install things?
+    # The better thing to do here, would be to install what is missing
+    # Add some prompting perhaps, or fully automate
+    # Automate is better than interactive for something like this, I did it in other scripts...
+    # However, this one is currently interactive due to prompting for Admin credentials
+    echo "You're going to need to manually do this."
+    exit 77
+fi
+
+echo ""
+echo "Installing packages to join the domain..."
+# This could be a good spot to insert the automation
+# Only install what isn't already installed
+# Look at checking for updates and updating what isn't
+yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools policycoreutils-python krb5-workstation openldap-clients -y
+
+echo ""
+echo "Now to join the domain..."
+echo ""
+COUNT=0
+while [ $COUNT -ne 1 ]; do
+  read -p "Please type out the account you would like to use:" domjoin
+  echo "The account you typed is:"
+  echo "$domjoin"
+  echo ""
+  echo "Did you enter the correct account?"
+  echo ""
+  read -p " Continue?(Y/N/Q) " scriptstart
+  echo ""
+
+  case $scriptstart in
+  [yY])
+    echo "Alright, let's go!"
+    echo "Get ready to enter the password when prompted!"
+    COUNT=1
+    ;;
+  [nN])
+    echo "Try again."
+    COUNT=0
+    ;;
+  [qQ])
+    echo "Quitting."
+    COUNT=0
+    exit 77
+    ;;
+  *)
+    echo "I'm sorry, but you did not respond appropriately."
+    echo "I'll blame the keyboard, for now."
+    echo "Next time, I'm blaming the interface between"
+    echo "the keyboard and the chair."
+    COUNT=0
+    ;;
+  esac
+done
+
+realm join --user=$domjoin DOMAIN.TLD
+
+if [ -f /etc/sssd/sssd.conf ]
+  then
+    sed -i 's/use_fully_qualified_names = True/use_fully_qualified_names = False/' /etc/sssd/sssd.conf
+    sed -i 's|fallback_homedir = /home/%u@%d|fallback_homedir = /home/%u|' /etc/sssd/sssd.conf
+    sed -i 's/access_provider = ad/access_provider = simple/' /etc/sssd/sssd.conf
+    printf "simple_allow_groups = GROUPNAME" >> /etc/sssd/sssd.conf
+  else
+    echo "I couldn't find /etc/sssd/sssd.conf"
+    echo "You'll want to look into that."
+    echo "Fix it after creating/finding it."
+    read -p "Press ENTER to continue..." CONTINUE
+fi
+
+# Here's a better way for me to mess with sudoers and sudoers.d files without potentially breaking sudo
+# Check out https://stackoverflow.com/questions/323957/how-do-i-edit-etc-sudoers-from-a-script
+#if [ -z "$1" ]; then
+#  echo "Starting up visudo with this script as first parameter"
+#  export EDITOR=$0 && sudo -E visudo
+#else
+#  echo "Changing sudoers"
+#  echo "# Dummy change to sudoers" >> $1
+#fi
+GROUPNAME=/etc/sudoers.d/GROUPNAME
+if [ -f $GROUPNAME ]
+  then
+    echo "Hey, there's already a sudoers file for GROUPNAME!"
+    echo "I'll check consistency for you."
+    if [ $(visudo -c -f $GROUPNAME)]
+      then
+        echo "Visudo says the file checks out."
+      else
+        echo "Visudo didn't like something about $GROUPNAME"
+        echo "Sudo might be broken until that is fixed."
+    fi
+  else
+    echo "Creating sudoers file for GROUPNAME"
+    read -d '' SUDOERS <<"EOF"
+# Cmnd alias specification
+
+# User privilege specification
+%GROUPNAME ALL=(ALL) ALL
+EOF
+    echo "${SUDOERS}" | tee $GROUPNAME
+fi
+systemctl restart sssd
