@@ -1,0 +1,5 @@
+#!/bin/bash
+for ip in $(cat servers)
+  do echo -n "$ip " >> name_to_ip
+    echo "$(nslookup $ip | grep name | awk -F= {' print $2 '} | awk -F. {' print $1 '})" >> name_to_ip
+done
