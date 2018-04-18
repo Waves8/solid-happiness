@@ -1,0 +1,23 @@
+Facility
+^<(\d.+)>
+
+Priority level
+^<(\d.+)>
+
+Source of a message
+(\w+\d\d-\d)
+
+Timestamp
+>:\s.+:\s(.+?):\s%
+
+Interface
+(\w\w(\d\d|\d)\/(\d\d|\d)\/(\d\d|\d))
+
+Local Level
+%.+-(\d?)-
+
+Msg
+((?<=%%).*)
+
+Message
+(^.+$)
