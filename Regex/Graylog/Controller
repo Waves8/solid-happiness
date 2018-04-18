@@ -1,3 +1,11 @@
 Date and Time
-(\w\w\w\s(\d\d|\d)\s\d\d\:\d\d\:\d\d\s\d\d\d\d)
+\w{3}\s(\d\d|\d)\s\d{2}:\d{2}:\d{2}\s\d{4}
 
+Source AP
+\d{2}.\d{3}.\d{3}.\d{2}\s\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2}
+
+Source MAC
+\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2}
+
+BSSID
+bssid-(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})
