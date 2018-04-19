@@ -1,1 +1,333 @@
+#!/bin/bash
 
+# This is for doing the intial setup of elasticsearch,
+# mongodb, and graylog
+# minus setting up their config files (for now)
+
+# https://stackoverflow.com/questions/35800082/how-to-trap-err-when-using-set-e-in-bash
+#set -E
+trap '[ "$?" -ne 77 ] || exit 77' ERR
+
+clear
+printf "\n"
+if [ "$(whoami)" != 'root' ]
+  then
+    echo "You will not be able to run $0 as non-root user."
+    exit 1
+fi
+
+echo "Please make sure that you have already run a yum update"
+echo "and that you have rebooted to apply any kernel updates."
+echo ""
+# echo "If this script fails, you can use 'echo $?' after running"
+# echo "to possibly get an exit code to help you diagnose where"
+# echo "in the script it failed. Hopefully."
+# echo ""
+# echo "4 - Initial setup"
+# echo "5 - MongoDB"
+# echo "6 - ElasticSearch"
+# echo "7 - Graylog"
+echo ""
+echo "Are you ready to install Graylog?!?"
+echo "THIS IS FOR A SINGLE INSTANCE NODE ONLY!!!"
+echo "WARNING: This script will attempt to install"
+echo "all three parts of a working Graylog Node."
+echo ""
+echo "You've been warned."
+COUNT=0
+echo ""
+printf "\n"
+while [ $COUNT -ne 1 ]; do
+  read -p " Continue?(Y/N) " scriptstart
+  echo ""
+
+  case $scriptstart in
+  [yY])
+    echo "Alright, let's go!"
+    COUNT=1
+    ;;
+  [nN])
+    echo "Come back later when you're ready to do this."
+    exit 77
+    ;;
+  *)
+    echo "I'm sorry, but you did not respond appropriately."
+    echo "I'll blame the keyboard, for now."
+    echo "Next time, I'm blaming the interface between"
+    echo "the keyboard and the chair."
+    COUNT=0
+    ;;
+  esac
+done
+
+echo ""
+echo "Let's get started!"
+echo ""
+echo ""
+echo ""
+echo "Time for some setup."
+echo ""
+echo "So, we're going to need Java for ElasticSearch and Graylog..."
+echo ""
+echo "Installing Java..."
+yum install java-1.8.0-openjdk-headless.x86_64 -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+  else
+    echo "Looks like I wasn't able to install Java, for some reason."
+    echo "Maybe the Journal knows why?"
+    exit 77
+fi
+
+echo ""
+echo "Adding the Extra Packages for Enterprise Linux repo..."
+yum install epel-release -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+  else
+    echo "Looks like I wasn't able to install EPEL, for some reason."
+    echo "Maybe the Journal knows why?"
+    exit 77
+fi
+
+echo ""
+echo "Installing pwgen..."
+yum install pwgen -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+  else
+    echo "Looks like I wasn't able to install pwgen, for some reason."
+    echo "Maybe the Journal knows why"
+    exit 77
+fi
+
+echo ""
+echo "Installing policycoreutils-python..."
+echo ""
+yum install policycoreutils-python -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+  else
+    echo "Looks like I wasn't able to install policycoreutils-python, for some reason."
+    echo "Maybe the Journal knows why?"
+    exit 77
+fi
+
+echo "Setting up the MongoDB repo..."
+echo ""
+
+read -d '' MONGO <<"EOF"
+[mongodb-org-3.6]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.6/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
+EOF
+
+echo "${MONGO}" | tee /etc/yum.repos.d/mongodb-org-3.6.repo
+
+echo ""
+echo "Done trying to set up the MongoDB repo..."
+echo ""
+echo "Now let's try installing MongoDB!"
+echo ""
+echo "Installing MongoDB..."
+yum install mongodb-org -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+    echo "Reloading daemons..."
+    systemctl daemon-reload
+    echo "Enabling mongod..."
+    systemctl enable mongod.service
+    echo "Starting up Mongo..."
+    systemctl start mongod.service
+  else
+    echo "Looks like I wasn't able to install MongoDB, for some reason."
+    echo "You'll want to look into that."
+    echo "Make sure the repo got set up correctly."
+    exit 77
+fi
+
+echo ""
+echo "Installing the GPG Key for ElasticSearch..."
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+echo "DONE!"
+
+echo ""
+echo "Setting up the ElasticSearch repo..."
+read -d '' ELASRCH <<"EOF"
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+
+echo "${ELASRCH}" | tee /etc/yum.repos.d/elasticsearch.repo
+echo ""
+echo "Done trying to set up the ElasticSearch repo..."
+echo ""
+echo "Now let's try installing ElasticSearch!"
+echo ""
+echo "Installing ElasticSearch..."
+yum install elasticsearch -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+    echo ""
+    echo "Making a copy of the original YAML config file..."
+    cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.orig
+    echo ""
+    echo "Cool, make sure you edit the config file: /etc/elasticsearch/elasticsearch.yml"
+    echo "Once you've finished that, you can:"
+    echo "1. Reload daemons"
+    echo "2. Enable ElasticSearch"
+    echo "3. Start ElasticSearch"
+    echo "4. Hope for no errors!"
+    echo "5. Do the next thing!"
+  else
+    echo "Looks like I wasn't able to install ElasticSearch, for some reason."
+    echo "You'll want to look into that."
+    echo "Make sure the repo got set up correctly."
+    exit 77
+fi
+
+echo ""
+echo "Time to install Graylog2!"
+echo ""
+echo "Downloading the package..."
+echo ""
+rpm -Uvh https://packages.graylog2.org/repo/packages/graylog-2.4-repository_latest.rpm
+echo "DONE!"
+echo ""
+echo "Installing Graylog2..."
+yum install graylog-server -y
+if [ $? -eq 0 ]
+  then
+    echo "DONE!"
+    echo ""
+    echo "Making a copy of the original config file..."
+    cp /etc/graylog/server/server.conf /etc/graylog/server/server.conf.orig
+    echo ""
+    echo "Cool, make sure you edit the config file: /etc/graylog/server/server.conf"
+    echo ""
+    echo "Oh, I'll take care of grabbing the geolocation database for you too."
+    echo "This process isn't perfect, so you might just have to do it manually..."
+    curl -o /tmp/GeoLite2-City.tar.gz http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz
+    curl -o /tmp/GeoLite2-City.tar.gz.md5 http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz.md5
+    A=$(md5sum /tmp/GeoLite2-City.tar.gz)
+    A=$(echo $A | awk {'print $1'})
+    B=$(cat /tmp/GeoLite2-City.tar.gz.md5)
+    if [ $A == $B ]
+      then
+        tar -xvzf /tmp/GeoLite2-City.tar.gz -C /tmp
+        cp /tmp/$(ls -L /tmp | awk '/GeoLite2-City_/ {print $1}')/GeoLite2-City.mmdb /etc/graylog/server/
+      else
+        echo "Uh oh, the MD5 hashes do not match."
+        echo "I'm not going to extract this DB, you need to find out why things didn't match."
+        echo "You can find the files in /tmp."
+        echo "GeoLocation of IP's unavailable until you resolve this."
+    fi
+    echo ""
+    echo "Once you've finished that, you can:"
+    echo "1. Reload daemons"
+    echo "2. Enable Graylog"
+    echo "3. Start Graylog"
+    echo "4. Hope for no errors!"
+    echo "5. Do the next thing!"
+  else
+    echo "Looks like I wasn't able to install Graylog, for some reason."
+    echo "You'll want to look into that."
+    echo "Make sure the rpm downloaded and isn't corrupt?"
+    exit 77
+fi
+
+echo ""
+echo "Here's your key to use in Graylog, if you miss it I'll put it into a file for you."
+echo ""
+pwgen -N 1 -s 96 | tee /tmp/graylogkey.out
+echo "New file: /tmp/graylogkey.out"
+
+echo ""
+echo "Here's your hash to use in Graylog, if you miss it I'll put it into a file for you."
+echo ""
+printf "$(cat /tmp/graylogkey.out)" | sha256sum | awk {'print $1'} | tee /tmp/grayloghash.out
+echo ""
+echo "New file: /tmp/grayloghash.out"
+
+echo ""
+echo "Feel free to delete those files once you're done using them."
+echo "You could also log them into a Password Manager, like"
+echo "PasswordState!"
+read -p " Press ENTER to continue... " nothing
+
+echo ""
+echo "Here are your current firewall failures, uh features:"
+echo ""
+firewall-cmd --list-all
+echo ""
+echo "Looks great, huh?"
+echo ""
+read -p "Press ENTER to change that..." nothing
+echo ""
+echo "Punching holes in your firewall..."
+echo ""
+
+firewall-cmd --permanent --zone=public --add-port=9000/tcp
+firewall-cmd --permanent --zone=public --add-port=5140/udp
+firewall-cmd --reload
+
+echo ""
+echo "DONE!"
+echo ""
+echo "Check out your rad new holes!"
+firewall-cmd --list-all
+read -p "Press Enter to continue..." nothing
+echo "Once you complete setting up Graylog,"
+echo " you should be able to reach the frontend via browser:"
+echo "IP:9000"
+echo "If there is an A record in DNS, you could use:"
+echo "DNSHOSTNAME:9000"
+echo ""
+
+echo "All that's left for you to do:"
+echo "Name the cluster in /etc/elasticsearch/elasticsearch.yml"
+echo "Enter the graylogkey into /etc/graylog/server/server.conf"
+echo "Enter the grayloghash into /etc/graylog/server/server.conf"
+echo "Change the rest_listen_uri to the local IP"
+echo "Change the web_listen_uri to the local IP"
+echo "Reload daemons"
+echo "Enable elasticsearch"
+echo "Start elasticsearch"
+echo "Enable graylog-server"
+echo "Start graylog-server"
+echo "Log in and configure stuff!"
+echo "Inputs, extractors, geolocation, whatever."
+echo ""
+echo "Oh, and don't forget to point stuff at Graylog!"
+echo ""
+read -p "Press ENTER to go play..." COUNT
+
+# Things left to do
+# DONE install epel-release
+# DONE install pwgen
+# DONE install policcycoreutils-python
+# DONE consider scripting out using pwgen
+# DONE set up the firewall
+# DONE firewall-cmd --permanent --zone=public --add-port=9000/tcp
+# DONE firewall-cmd --permanent --zone=public --add-port=5140/udp
+# DONE firewall-cmd --reload
+# semanage httpd for ports other than 9000?
+# That would be semanage port -a -t http_port_t -p tcp 5140?
+# doesn't seem that is needed though, nor are the mongodb
+# or elasticsearch ports.
+# Doublecheck history etc.
