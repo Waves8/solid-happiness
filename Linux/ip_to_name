@@ -1,5 +1,7 @@
 #!/bin/bash
+
 for ip in $(cat servers)
   do echo -n "$ip " >> name_to_ip
+# Probably a more elegant way to do this via regex and just grab everything after the '=' until the end of the line.
     echo "$(nslookup $ip | grep name | awk -F= {' print $2 '} | awk -F. {' print $1 '})" >> name_to_ip
 done
