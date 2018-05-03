@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# I got this from xaqtly on MacAdmins Slack
+
+####################################################################################################
+#
+# More information: http://macmule.com/2014/05/04/submit-user-information-from-ad-into-the-jss-at-login-v2/
+#
+# GitRepo: https://github.com/macmule/SubmitUsernameAtReconForLDAPLookup
+#
+# License: http://macmule.com/license/
+#
+# Modified for use with NoMAD by xaqtly
+####################################################################################################
+
+# Get the logged in user
+loggedInUser=`python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");'`
+
+# Read domain user from NoMAD plist
+NoMADUser=`sudo -u $loggedInUser defaults read com.trusourcelabs.nomad.plist LastUser`
+
+echo "Running recon for $NoMADUser `date`..."
+
+# Run recon, submitting the NoMAD user's username which as of 8.61+ can then perform an LDAP lookup
+sudo jamf recon -endUsername $NoMADUser
+
+echo "Finished running recon for $NoMADUser `date`..."
