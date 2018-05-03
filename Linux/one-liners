@@ -1,5 +1,5 @@
  # Output the group members on their own line
- # getent group $GROUPNAME | awk -F: {' print $4 '} | sed 's/,/\\n\g
+ #getent group $GROUPNAME | awk -F: {' print $4 '} | sed 's/,/\\n\g
  
  # Output group memberships on their own line
- # id $USER | awk -F= {' print $4 '} | sed s/,/\\n/g
+ #id $USER | awk -F= {' print $4 '} | sed s/,/\\n/g
