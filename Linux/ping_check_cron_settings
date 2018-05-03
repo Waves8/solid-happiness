@@ -1,4 +1,4 @@
-crontab -l
+$crontab -l
 SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/davisa-admin@bvelab.local/.local/bin:/home/USERNAME/bin:/home/USERNAME/testing
 
