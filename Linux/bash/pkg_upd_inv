@@ -13,6 +13,11 @@
 #  unless I just wanted to just look for the files matching today's date vs 
 #  yesterday's date
 
+# Also, consider if any lines should be excluded for some of the diff checks.
+# Probably useful to capture what mirror was checked/used, but would they be
+# necessary for doing a diff check when what I'm looking for is if there is a 
+# difference in packages?
+
 # Get the list of installed packages
 # Will need to test/find out if sort will be required to keep things regular
 # and standard (probably)
