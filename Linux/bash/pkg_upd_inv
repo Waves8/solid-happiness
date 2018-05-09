@@ -23,6 +23,7 @@
 
 # Consider using case to catch for other exit values and follow-up
 #yum check-updates > $(date +%Y_%m_%d_%H_%M_%S).updateslist
+#wc -l 2018_05_09_12_02_29.updateslist > 2018_05_09_12_02_29.updateslist.wc
 
 # Actions to follow...
 # Using diff to compare current and previous day
