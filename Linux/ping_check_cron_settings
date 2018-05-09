@@ -7,4 +7,5 @@ PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/davisa-admin@bvelab
 # Run every 5 minutes
 */5 * * * * ping_check.sh
 # Log rotation every sharp XX:30 (Delete found *.txt* files older than 6 hours)
+# I wonder if I would be able to leverage logrotate for this...
 0,30 * * * * cd /home/USERNAME/testing/ping_check_results; find *.txt* -mmin +360 -delete
