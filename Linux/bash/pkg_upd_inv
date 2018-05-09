@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#Probably going to be using some case in here
+#
+# Need to consider
+#  1 Use date at runtime of each file creation
+#  2 Set a date at the beginning of runtime and repeat value for each file,
+#  allowing for the minor differneces in seconds/minutes to be ignored
+
+#  I could also not include the seconds...
+
+#  Probably the latter, for easier referencing and performing other follow-up actions
+#  unless I just wanted to just look for the files matching today's date vs 
+#  yesterday's date
+
+# Get the list of installed packages
+# Will need to test/find out if sort will be required to keep things regular
+# and standard (probably)
+# Also get the line count
+
+#rpm -qa > $(date +%Y_%m_%d_%H_%M_%S).pkglist
+#wc -l 2018_05_09_12_02_29.pkglist > 2018_05_09_12_02_29.pkglist.wc
+
+# Consider using case to catch for other exit values and follow-up
+#yum check-updates > $(date +%Y_%m_%d_%H_%M_%S).updateslist
+
+# Actions to follow...
+# Using diff to compare current and previous day
+# etc
