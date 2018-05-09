@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Would be useful to have a QA script...
+
+# Check hardware
+# Check OS vers
+# Check interfaces and their configs
+# Check df/du
+# Check installed packages
+# Check to see if they can see their gateway?
+# Check to see if they can see Internet/mirrors/any?
