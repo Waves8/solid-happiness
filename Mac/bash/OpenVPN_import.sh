@@ -8,12 +8,12 @@ loggedInUser=$(python -c 'from SystemConfiguration import SCDynamicStoreCopyCons
 
 if [ -d /Applications/OpenVPN/OpenVPN\ Connect.app ]
   then
-    if [ -f /Library/Frameworks/OpenVPN.framework/Versions/Current/bin/capicli ]
+    if [ -f /path/to/capicli ]
       then
         for i in $(ls /tmp/*vpn.ovpn); do
           echo "Found $i!"
           echo "Importing $i..."
-          sudo -u "$loggedInUser" /Library/Frameworks/OpenVPN.framework/Versions/Current/bin/capicli -f $i importprofilefromfile
+          sudo -u "$loggedInUser" /path/to/capicli -f $i importprofilefromfile
           echo "Cleaning up $i..."
           rm $i
           done
