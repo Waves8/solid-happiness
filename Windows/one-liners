@@ -1,0 +1,16 @@
+# From http://superuser.com/questions/333733/how-can-i-tell-which-domain-controller-im-authenticated-to
+# To determine computer/server DC use NLTEST
+#nltest /dsgetdc:<domain_name>
+
+# To list all DC's with their appropriate site, try
+#nltest /dclist:<domain_name>
+
+# You don't have to use the FQDN of the domain name or server
+# For example, instead of saying
+#/dclist:services.microsoft.com
+# You can simply type
+#/dclist:services
+# as long as you are an authenticated member of that domain
+
+# For user authentication and group policy use LOGONSERVER variable
+#echo %logonserver%
