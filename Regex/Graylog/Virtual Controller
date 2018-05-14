@@ -9,3 +9,9 @@ Source MAC
 
 BSSID
 bssid-(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})
+
+Severity
+(<[A-Z]{1,}>)
+
+Msg
+^.*>.*>.(.*)
