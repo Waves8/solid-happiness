@@ -14,3 +14,12 @@
 
 # For user authentication and group policy use LOGONSERVER variable
 #echo %logonserver%
+
+# Get direct reports under a manager
+get-aduser $username -Properties DirectReports | select -expand DirectReports
+
+# I had a loop for this, and it looks like I didn't document it
+# recurse through each user, starting at a particular user (to obtain whole org)
+# selecting different properties for the request I had
+# Pretty sure I used this for a reference http://www.lazywinadmin.com/2014/10/powershell-who-reports-to-whom-active.html
+# Found another example that could be used https://social.technet.microsoft.com/Forums/ie/en-US/7bc3d133-e2b3-4904-98dd-b33993db628a/recursively-select-all-subordinates-for-all-users-from-ad?forum=winserverpowershell
