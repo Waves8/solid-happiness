@@ -22,16 +22,16 @@ fi
 
 echo "Checking to make sure none of these packages are already installed."
 
-SSSD=$(rpm -qa | grep sssd)
-REALMD=$(rpm -qa | grep realmd)
-ODDJOB=$(rpm -qa | grep ^oddjob\\S[0-9])
-ODDJOBMK=$(rpm -qa | grep oddjob-mkhomedir)
-ADCLI=$(rpm -qa | grep adcli)
-SAMBACM=$(rpm -qa | grep samba-common)
-SAMBACMT=$(rpm -qa | grep samba-common-tools)
-POLICYCORE=$(rpm -qa | grep policycoreutils-python)
-KRB5=$(rpm -qa | grep krb5-workstation)
-OPENLDAP=$(rpm -qa | grep openldap-clients)
+pkg1=$(rpm -qa | grep pkg1)
+pkg2=$(rpm -qa | grep pkg2)
+pkg3=$(rpm -qa | grep ^pkg3\\S[0-9])
+pkg4=$(rpm -qa | grep pkg4)
+pkg5=$(rpm -qa | grep pkg5)
+pkg6=$(rpm -qa | grep pkg6)
+pkg7=$(rpm -qa | grep pkg7)
+pkg8=$(rpm -qa | grep pkg8)
+pkg8=$(rpm -qa | grep pkg9)
+pkg9=$(rpm -qa | grep pkg10)
 TEMPFILE=/tmp/$$.tmp
 echo 0 > $TEMPFILE
 
@@ -39,103 +39,103 @@ echo "Here are the installation statuses:"
 COUNTER=0
 INSTALLED=0
 while [ $COUNTER -ne 10 ]; do
-  if [ $(rpm -qa | grep sssd) ]
+  if [ $(rpm -qa | grep pkg1) ]
     then
-      echo "sssd version: $SSSD"
+      echo "pkg1 version: $pkg1"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "sssd not installed"
+      echo "pkg1 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep realmd) ]
+  if [ $(rpm -qa | grep pkg2) ]
     then
-      echo "realmd version: $REALMD"
+      echo "pgk2 version: $pkg2"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "realmd not installed"
+      echo "pkg2 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep ^oddjob\\S[0-9]) ]
+  if [ $(rpm -qa | grep ^pkg3\\S[0-9]) ]
     then
-      echo "oddjob version: $ODDJOB"
+      echo "pkg3 version: $pkg3"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "oddjob not installed"
+      echo "pkg3 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep oddjob-mkhomedir) ]
+  if [ $(rpm -qa | grep pkg4) ]
     then
-      echo "oddjob-mkhomedir version: $ODDJOBMK"
+      echo "pkg4 version: $pkg4"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "oddjob-mkhomedir not installed"
+      echo "pkg4 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep adcli) ]
+  if [ $(rpm -qa | grep pkg5) ]
     then
-      echo "adcli version: $adcli"
+      echo "pkg5 version: $pkg5"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "adcli not installed"
+      echo "pkg5 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep samba-common) ]
+  if [ $(rpm -qa | grep pkg6) ]
     then
-      echo "samba-common version: $SAMBACM"
+      echo "pkg6 version: $pkg6"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "samba-common not installed"
+      echo "pkg6 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep samba-common-tools) ]
+  if [ $(rpm -qa | grep pkg7) ]
     then
-      echo "samba-common-tools version: $SAMBACMT"
+      echo "pkg7 version: $pkg7"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "samba-common-tools not installed"
+      echo "pkg7 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep policycoreutils-python) ]
+  if [ $(rpm -qa | grep pkg8) ]
     then
-      echo "policycoreutils-python version: $POLICYCORE"
+      echo "pkg8 version: $pkg8"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "policycoreutils-python not installed"
+      echo "pkg8 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep krb5-workstation) ]
+  if [ $(rpm -qa | grep pkg9) ]
     then
-      echo "krb5-workstation version: $KRB5"
+      echo "pkg9 version: $pkg9"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "krb5-workstation not installed"
+      echo "pkg9 not installed"
   fi
   let COUNTER++
   echo ""
-  if [ $(rpm -qa | grep openldap-clients) ]
+  if [ $(rpm -qa | grep pkg10) ]
     then
-      echo "openldap-clients version: $OPENLDAP"
+      echo "pkg10 version: $pkg10"
       INSTALLED=$[$(cat $TEMPFILE) + 1]
       echo $INSTALLED > $TEMPFILE
     else
-      echo "openldap-clients not installed"
+      echo "pkg10 not installed"
   fi
   let COUNTER++
   echo ""
@@ -151,6 +151,8 @@ if [ $(cat $TEMPFILE) -eq 0 ]
     # Add some prompting perhaps, or fully automate
     # Automate is better than interactive for something like this, I did it in other scripts...
     # However, this one is currently interactive due to prompting for Admin credentials
+	# Possibly even add version checking (what's newest available vs what is installed if 
+	# a package was already installed...
     echo "You're going to need to manually do this."
     exit 77
 fi
@@ -160,7 +162,7 @@ echo "Installing packages to join the domain..."
 # This could be a good spot to insert the automation
 # Only install what isn't already installed
 # Look at checking for updates and updating what isn't
-yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools policycoreutils-python krb5-workstation openldap-clients -y
+yum install pkg1 pkg2 pkg3 pkg4 pkg5 pkg6 pkg7 pkg8 pkg9 pkg10 -y
 
 echo ""
 echo "Now to join the domain..."
@@ -247,4 +249,6 @@ if [ -f $GROUPNAME ]
 EOF
     echo "${SUDOERS}" | tee $GROUPNAME
 fi
-systemctl restart sssd
+systemctl restart pkg1
+
+# Maybe consider doing some LDAP lookups or something to verify things?
