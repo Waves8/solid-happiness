@@ -1,19 +1,19 @@
 # From http://superuser.com/questions/333733/how-can-i-tell-which-domain-controller-im-authenticated-to
 # To determine computer/server DC use NLTEST
-#nltest /dsgetdc:<domain_name>
+nltest /dsgetdc:<domain_name>
 
 # To list all DC's with their appropriate site, try
-#nltest /dclist:<domain_name>
+nltest /dclist:<domain_name>
 
 # You don't have to use the FQDN of the domain name or server
 # For example, instead of saying
-#/dclist:services.microsoft.com
+/dclist:services.microsoft.com
 # You can simply type
-#/dclist:services
+/dclist:services
 # as long as you are an authenticated member of that domain
 
 # For user authentication and group policy use LOGONSERVER variable
-#echo %logonserver%
+echo %logonserver%
 
 # Get direct reports under a manager
 get-aduser $username -Properties DirectReports | select -expand DirectReports
@@ -23,3 +23,12 @@ get-aduser $username -Properties DirectReports | select -expand DirectReports
 # selecting different properties for the request I had
 # Pretty sure I used this for a reference http://www.lazywinadmin.com/2014/10/powershell-who-reports-to-whom-active.html
 # Found another example that could be used https://social.technet.microsoft.com/Forums/ie/en-US/7bc3d133-e2b3-4904-98dd-b33993db628a/recursively-select-all-subordinates-for-all-users-from-ad?forum=winserverpowershell
+
+# Connect to Exchange-Online
+# https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps
+Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
+$UserCredential = Get-Credential
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionURI https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+Import-PSSession $Session
+# This is supposed to be how to disconnect it, but I've been encountering an error
+Remove-PSSession $Session
