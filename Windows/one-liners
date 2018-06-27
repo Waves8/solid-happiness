@@ -18,6 +18,7 @@ echo %logonserver%
 # Connect to Exchange-Online
 # https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps
 Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
+# Remember to use the appropriate username for this!
 $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionURI https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
