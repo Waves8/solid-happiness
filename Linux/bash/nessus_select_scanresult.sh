@@ -31,6 +31,7 @@ while [[ "$sure" -ne "1" ]]; do
     [yY])
       sure=1
       curl -s -k -X POST -H "X-SecurityCenter: $token" -H 'Content-Type: application/json' -b sc_cookie.txt https://SECURITYCENTER/rest/scanResult/$scanid/download > scan_"$scanid".zip
+      echo "File written to scan_$scanid.zip"
       ;;
     [nN])
       continue
