@@ -30,7 +30,7 @@ while [[ "$sure" -ne "1" ]]; do
     case $sure in
     [yY])
       sure=1
-      resultfile="scan_"$scanid"_$(date +%Y%m%d%H%M%S).zip"
+      resultfile="scan_$scanid_$(date +%Y%m%d%H%M%S).zip"
       curl -s -k -X POST -H "X-SecurityCenter: $token" -H 'Content-Type: application/json' -b sc_cookie.txt https://SECURITYCENTER/rest/scanResult/$scanid/download > $resultfile
       echo "File written to $resultfile"
       ;;
