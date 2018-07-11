@@ -1,5 +1,5 @@
 # Found this for getting AD Direct Reports, handy!
-# I mistakenly had this in one-liners, here are the notes frm there
+# I mistakenly had this in one-liners, here are the notes from there
 # Get direct reports under a manager
 #get-aduser $username -Properties DirectReports | select -expand DirectReports
 
