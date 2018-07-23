@@ -1,6 +1,6 @@
 #!/bin/bash
-up_stamp = "$(date )"
-updatelist = "/temp/"$up_stamp"_SOMENAME
+up_stamp="$(date +%Y%m%d%H%M%S)"
+updatelist=/temp/"$up_stamp"_SOMENAME
 
 if [ -f $updatelist ]
   then
