@@ -22,5 +22,6 @@ Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
 $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionURI https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
-# This is supposed to be how to disconnect it, but I've been encountering an error
+# Do things
+# When done doing things
 Remove-PSSession $Session
