@@ -25,3 +25,34 @@ Import-PSSession $Session
 # Do things
 # When done doing things
 Remove-PSSession $Session
+
+# Things to work on (comments, etc all need to be improved)
+
+# I'm working on this one still
+
+foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {$_.ReDirectTo} | fl MailboxOwnerID,Name,RedirectTo >> C:\Temp\Redirect_Rule.txt }
+
+
+# Try this, can swap out the Format-Table at the end for Export-Csv to have an output csv file instead of output to stdout
+# Get-Mailbox -resultsize unlimited | Where {$_.ForwardingsmtpAddress -ne $null} | Select Name, PrimarySMTPAddress, ForwardingAddress, ForwardingSMTPAddress, DeliverToMailboxAndForward | Format-Table -AutoSize -Wrap
+
+# This is going to be super slow as it will be rate-limited by O365, up until the resultsize max is reached since
+# -resultsize unlimited isn't specified
+# Get-Mailbox | select UserPrincipalName,ForwardingSmtpAddress,DeliverToMailboxAndForward | Export-csv c:\temp\forwards.csv -NoTypeInformation
+
+# These should be faster, as they're only checking for mailboxes where there is something set for ForwardingSMTPAddress
+# Not quite the same as having an InboxRule though
+Get-Mailbox -resultsize unlimited | Where {$_.ForwardingsmtpAddress -ne $null} | Select Name, PrimarySMTPAddress, ForwardingAddress, forwardingsmtpaddress, DeliverToMailboxAndForward | ft -autosize -wrap
+
+# These two loops just 1) prove there's output and 2) only gets the inbox rules from those mailboxes that have something set in ForwardingSMTPAddress
+foreach ($i in (Get-Mailbox -ResultSize unlimited | Where {$_.ForwardingsmtpAddress -ne $null} )) { Get-InboxRule -Mailbox $i.DistinguishedName | ft -autosize -wrap}
+foreach ($i in (Get-Mailbox -ResultSize unlimited | Where {$_.ForwardingsmtpAddress -ne $null} )) { Get-InboxRule -Mailbox $i.DistinguishedName | where {$_.ForwardTo} | ft -autosize -wrap}
+# Might be better to just pull the rules from mailboxes where DeliverToMailboxAndForward are True?
+
+# This should probably have something that includes the date, and sets the name of the file with some of that data like YYYYMMDD
+# foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {$_.ForwardTo} | fl MailboxOwnerID,Name,ForwardTo >> C:\Temp\Forward_Rule.txt }
+
+# Variation to include RedirectTo as well, to get them both in one pass
+# Also, it might work better as a csv via Export-Csv
+# foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {($_.ForwardTo -ne $null) -or ($_.RedirectTo -ne $null)} | fl MailboxOwnerID,Name,ForwardTo,RedirectTo >> C:\Temp\Forward_Rule.txt }
+# foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {($_.ForwardTo -ne $null) -or ($_.RedirectTo -ne $null)} | select mailboxownerid,name,enabled,description,forwardto,redirectto| fl}
