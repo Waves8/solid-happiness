@@ -1,0 +1,57 @@
+$counter = 0
+write-host -ForegroundColor Cyan Begin results of WinCollect Agent String builder
+write-host
+get-content c:\users\davisa-admin\logsources.txt | ForEach-Object{
+$hostname = $_
+$counter++
+
+write-host -ForegroundColor Magenta Host number:$counter
+
+try
+{
+$ip = resolve-dnsname $hostname -ErrorAction Stop
+$ip = $ip.ip4address
+}
+catch
+{
+$ip = "Fail"
+}
+
+if ($ip -like "XXX.XXX.*")
+{
+write-host
+write-host =========
+write-host -ForegroundColor Green $hostname $ip
+write-host -foregroundcolor Yellow "wincollect-7.2.8-91.x64.exe /s /v""/qn INSTALLDIR=\""C:\Program Files\IBM\WinCollect\"" LOG_SOURCE_AUTO_CREATION_ENABLED=True LOG_SOURCE_AUTO_CREATION_PARAMETERS=""""Component1.AgentDevice=DeviceWindowsLog&Component1.Action=create&Component1.LogSourceName=$hostname&Component1.LogSourceIdentifier=$IP&Component1.Dest.Name=<DataGatewayIP>&Component1.Dest.Hostname=<DataGatewayIP>&Component1.Dest.Port=514&Component1.Dest.Protocol=TCP&Component1.Log.Security=true&Component1.Log.System=true&Component1.Log.Application=true&Component1.Log.DNS+Server=true&Component1.Log.File+Replication+Service=true&Component1.Log.Directory+Service=true&Component1.RemoteMachinePollInterval=3000&Component1.EventRateTuningProfile=High+Event+Rate+Server&Component1.MinLogsToProcessPerPass=1250&Component1.MaxLogsToProcessPerPass=1875"""""" "
+write-host =========
+write-host
+}
+elseif ($ip -like "XXX.XXX.*" -or $ip -like "XXX.XXX.*")
+{
+write-host
+write-host =========
+write-host -ForegroundColor Green $hostname $ip
+write-host -ForegroundColor Yellow "wincollect-7.2.8-91.x64.exe /s /v""/qn INSTALLDIR=\""C:\Program Files\IBM\WinCollect\"" LOG_SOURCE_AUTO_CREATION_ENABLED=True LOG_SOURCE_AUTO_CREATION_PARAMETERS=""""Component1.AgentDevice=DeviceWindowsLog&Component1.Action=create&Component1.LogSourceName=$hostname&Component1.LogSourceIdentifier=$IP&Component1.Dest.Name=<DataGatewayIP>&Component1.Dest.Hostname=<DataGatewayIP>&Component1.Dest.Port=514&Component1.Dest.Protocol=TCP&Component1.Log.Security=true&Component1.Log.System=true&Component1.Log.Application=true&Component1.Log.DNS+Server=true&Component1.Log.File+Replication+Service=true&Component1.Log.Directory+Service=true&Component1.RemoteMachinePollInterval=3000&Component1.EventRateTuningProfile=High+Event+Rate+Server&Component1.MinLogsToProcessPerPass=1250&Component1.MaxLogsToProcessPerPass=1875"""""" "
+write-host =========
+write-host
+}
+elseif ($ip -like "Fail")
+{
+write-host
+write-host =========
+write-host -ForegroundColor Red $hostname $ip
+write-host -ForegroundColor Cyan Failed to obtain IP, possibly no DNS record?
+write-host =========
+write-host
+}
+else
+{
+write-host
+write-host =========
+write-host -ForegroundColor Red $hostname $ip
+write-host -ForegroundColor Cyan $hostname failed location IP criterias.
+write-host -ForegroundColor Cyan Verify IP of $hostname
+write-host =========
+write-host
+}
+} #| out-file c:\users\$USERNAME\wincollect_strings.txt
