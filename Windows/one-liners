@@ -56,3 +56,6 @@ foreach ($i in (Get-Mailbox -ResultSize unlimited | Where {$_.ForwardingsmtpAddr
 # Also, it might work better as a csv via Export-Csv
 # foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {($_.ForwardTo -ne $null) -or ($_.RedirectTo -ne $null)} | fl MailboxOwnerID,Name,ForwardTo,RedirectTo >> C:\Temp\Forward_Rule.txt }
 # foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {($_.ForwardTo -ne $null) -or ($_.RedirectTo -ne $null)} | select mailboxownerid,name,enabled,description,forwardto,redirectto| fl}
+
+# See all console colors, foreground and background
+([System.Enum]::getvalues([System.ConsoleColor])) | foreach {write-host $_ -ForegroundColor $_; write-host $_ -BackgroundColor $_}
