@@ -1,5 +1,6 @@
 #quick and dirty script to add a user to the local admin group
 #experimenting with different ways of trying to create a powershell session with RunAs and via separate credentials
+#like it says, it is quick and dirty - I'd prefer to set up parameters, prompts, try/catch/finally, logging, etc
 
 # Just in case we do this via parameters and calling the script
 
