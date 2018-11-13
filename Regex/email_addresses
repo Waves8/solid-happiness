@@ -1,2 +1,5 @@
 # Seen at https://www.shellhacks.com/regex-find-email-addresses-file-grep/
 "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}\b"
+
+# Also see https://www.regular-expressions.info/email.html
+\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b
