@@ -1,0 +1,27 @@
+# Unfortunately, I do not recall where I found this
+# Basically, it combines all the bodies of emails into one file
+
+# Path to .msg files
+$msgDir = "\path\to\emails"
+# Array to store results
+$msgArray = New-Object System.Collections.Generic.List[object]
+
+# Loop throuch each .msg file
+Get-ChildItem "$msgDir" -Filter *.msg |
+    ForEach-Object {
+        # Open .msg file
+        $outlook = New-Object -comobject outlook.application
+        $msg = $outlook.Session.OpenSharedItem($_.FullName)
+        # Add .msg file Subject and Body to array
+        $msgArray.Add([pscustomobject]@{Body=$msg.Body;})
+        $msg.Close(0) # Close doesn't always work, see KB2633737 -- restart ISE/PowerShell
+    }
+
+# Loop though / parse each message
+ForEach ($message in $msgArray) {
+    $body = $message.body
+    #$regex = `\bemailAddress":"(\S*)","a\b`
+    #$emailAddress = $body | Select-String -Pattern $regex
+    #Write-Output $emailAddress
+    add-content -path path\to\file\filename.ext -value "$body`r`n"
+}
