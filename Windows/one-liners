@@ -15,10 +15,21 @@ nltest /dclist:<domain_name>
 # For user authentication and group policy use LOGONSERVER variable
 echo %logonserver%
 
-# Connect to Exchange-Online
+# Execution Policy
+#Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
+
+# YES MFA Connect to Exchange
+#https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps
+# Connect-EXOPSSession -UserPrincipalName <UPN>
+
+# YES MFA Connect to Security & Compliance
+#https://docs.microsoft.com/en-us/powershell/exchange/office-365-scc/connect-to-scc-powershell/mfa-connect-to-scc-powershell?view=exchange-ps
+# Connect-IPPSSession -UserPrincipalName chris@contoso.com
+
+# NO MFA Connect to Exchange-Online
 # https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps
 Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
-# Remember to use the appropriate username for this!
+# Remember to use your UPN
 $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionURI https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
@@ -26,12 +37,12 @@ Import-PSSession $Session
 # When done doing things
 Remove-PSSession $Session
 
+##############################################################
 # Things to work on (comments, etc all need to be improved)
 
 # I'm working on this one still
 
 foreach ($i in (Get-Mailbox -ResultSize unlimited)) { Get-InboxRule -Mailbox $i.DistinguishedName | where {$_.ReDirectTo} | fl MailboxOwnerID,Name,RedirectTo >> C:\Temp\Redirect_Rule.txt }
-
 
 # Try this, can swap out the Format-Table at the end for Export-Csv to have an output csv file instead of output to stdout
 # Get-Mailbox -resultsize unlimited | Where {$_.ForwardingsmtpAddress -ne $null} | Select Name, PrimarySMTPAddress, ForwardingAddress, ForwardingSMTPAddress, DeliverToMailboxAndForward | Format-Table -AutoSize -Wrap
