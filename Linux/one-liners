@@ -6,6 +6,8 @@
 
 # Some workflow stuff via curl sending JSON
 #may need to escape the double quotes in the file
+#potentially, may need to also escape the doublequotes around $data?
+#\"$data\"
 #sed -i 's/"/\\"/g' filename
 #data=$(cat filename)
 #curl -v --request POST --header "Content-Type: application/json" --data '{"startData":{"se_json":"$data"}}' "https://domain.workflowcloud.com/api/v1/workflow/published/c137f234-144c-499c-88a8-7c568150d2f3/instances?token=TOKEN"
