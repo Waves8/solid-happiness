@@ -3,3 +3,7 @@
  
  # Output group memberships on their own line
  #id $USER | awk -F= {' print $4 '} | sed 's/,/\\n/g'
+
+# Some workflow stuff via curl sending JSON
+#data=$(cat filename)
+#curl -v --request POST --header "Content-Type: application/json" --data '{"startData":{"se_json":"$data"}}' "https://domain.workflowcloud.com/api/v1/workflow/published/c137f234-144c-499c-88a8-7c568150d2f3/instances?token=TOKEN"
