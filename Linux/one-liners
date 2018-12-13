@@ -5,8 +5,8 @@
  #id $USER | awk -F= {' print $4 '} | sed 's/,/\\n/g'
 
 # Some workflow stuff via curl sending JSON
-#may need to escape the double quotes in the file
-#potentially, may need to also escape the doublequotes around $data?
+# may need to escape the double quotes in the file
+# potentially, may need to also escape the doublequotes around $data?
 #\"$data\"
 #sed -i 's/"/\\"/g' filename
 #data=$(cat filename)
