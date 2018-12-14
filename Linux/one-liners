@@ -18,6 +18,12 @@
 # may consider creating file with the payload query
 # escape the doublequotes
 # then use sed to add the first line and last line to encapsulate the payload query
+
+# May need to escape the special characters like brace and doublequote
+#sed '1s/^/{"startData":{"se_json":"\n/' filename
+#echo "}} >> filename
+
+# How the completed file would look
 #{"startData":{"se_json":"
 #file_contents_with_doublequotes_escaped
 #"}}
