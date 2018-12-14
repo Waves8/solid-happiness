@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Create the comparison file if it does not exist
+if [ ! -f /var/log/ovpn.log.1.chk ];
+then
+touch /var/log/ovpn.log.1.chk
+fi
+
+# Use the comparison file to check against for changes since last check
+logchk="$(cat /var/log/ovpn.log.1.chk)"
+
+# Holdover from a previous version that would troll through the actual log file(s)
+#logoutput="$(cat /var/log/openvpnas.log.1 | grep "MULTI: primary virtual IP" | awk '{print $7,$8,$9,$10,$11,$18,$19}')"
+
+# This will provide the output in JSON format for active connections that started 24 hours ago
+logoutputjson="$(/usr/local/openvpn_as/scripts/logdba --json --start_time_ge="-24h" --service_filt="VPN" --active=1)"
+
+# This will provide the output in CSV format for active connections that started 24 hours ago
+logoutputcsv="$(/usr/local/openvpn_as/scripts/logdba --csv --start_time_ge="-24h" --service_filt="VPN" --active=1)"
+
+# Get the number of active connections started within 24h ago after stripping off the first line with grep
+currentuserscount="$(/usr/local/openvpn_as/scripts/logdba --csv --start_time_ge="-24h" --service_filt="VPN" --active=1 | grep -v Duration | wc -l)"
+
+# This is no longer needed as grep is removing the first line
+#currentuserscount="$(( $currentuserscount - 1 ))"
+
+# Get the number of unique users over the past 24 hours after stripping off the first line with grep
+peakuserscount="$(/usr/local/openvpn_as/scripts/logdba --csv --start_time_ge="-24h" --service_filt="VPN" | grep -v Duration | awk -F, '{ print $2 }' | sort | uniq | wc -l)"
+
+# This is no longer needed as grep is removing the first line
+#peakuserscount="$(( $peakuserscount - 1 ))"
+
+# The name of the OpenVPN server
+server="$(hostname)"
+
+# Email address to send mail to
+email="email.address@domain.tld"
+
+# Compare the contents of the comparison file against what current output is
+# if there are changes then a mail is sent with current status
+# does nothing if there are no changes EX: No users are connected
+if [ "$logoutputjson" != "$logchk" ];
+then
+echo "not equal"
+
+# Commenting out this line since we are using sendmail
+#echo -e "OpenVPN Usage For:\n\nserver: $server\n\n ${logoutput}" | mail -s "$server, OpenVPN Usage Report" $email
+
+/usr/sbin/sendmail -v "$email" <<EOF
+subject: $server, OpenVPN Usage Report
+from: $server
+
+$0
+OpenVPN Usage For:
+
+server: $server
+Current user count: ${currentuserscount}
+Peak unique user count last 24h: ${peakuserscount}
+
+JSON output:
+${logoutputjson}
+
+CSV output:
+${logoutputcsv}
+
+EOM
+EOF
+echo "${logoutputjson}" > /var/log/ovpn.log.1.chk
+fi
