@@ -10,7 +10,7 @@
 #\"$data\"
 #sed -i 's/"/\\"/g' filename
 #data=$(cat filename)
-#curl -v --request POST --header "Content-Type: application/json" --data '{"startData":{"se_json":"$data"}}' "https://domain.workflowcloud.com/api/v1/workflow/published/c137f234-144c-499c-88a8-7c568150d2f3/instances?token=TOKEN"
+#curl -v --request POST --header "Content-Type: application/json" --data '{"startData":{"se_json":"$data"}}' "https://domain.workflowcloud.com/api/v1/workflow/published/WorkflowID/instances?token=TOKEN"
 
 # So it turns out that perhaps instead of trying to properly figure out character expansion and special characters
 # Maybe just throw it all into a file with double quotes so that --data @file.json has it all
