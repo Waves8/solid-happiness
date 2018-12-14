@@ -19,17 +19,23 @@ echo %logonserver%
 #Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
 
 # YES MFA Connect to Exchange
-#https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps
-# Connect-EXOPSSession -UserPrincipalName <UPN>
+# Launch Microsoft Exchange Online Powershell Module (requires download)
+# https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps
+#Connect-EXOPSSession -UserPrincipalName <UPN>
+# I suppose could try using $Session = Connect-EXOPSSession -UserPrincipalName <UPN>
+# Makes it easier to Remove-PSSession via $Session rather than getting the -Id
 
 # YES MFA Connect to Security & Compliance
+# Launch Microsoft Exchange Online Powershell Module (requires download)
 #https://docs.microsoft.com/en-us/powershell/exchange/office-365-scc/connect-to-scc-powershell/mfa-connect-to-scc-powershell?view=exchange-ps
-# Connect-IPPSSession -UserPrincipalName chris@contoso.com
+#Connect-IPPSSession -UserPrincipalName <UPN>
+# I suppose could try using $Session = Connect-IPPSSession -UserPrincipalName <UPN>
+# Makes it easier to Remove-PSSession via $Session rather than getting the -Id
 
 # NO MFA Connect to Exchange-Online
 # https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps
 Set-ExecutionPolicy -Scope process -ExecutionPolicy RemoteSigned
-# Remember to use your UPN
+# Remember to use your UPN for auth
 $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionURI https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session
