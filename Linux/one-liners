@@ -20,7 +20,11 @@
 # then use sed to add the first line and last line to encapsulate the payload query
 
 # May need to escape the special characters like brace and doublequote
+# Create the file with the contents, filename
+#cat $logoutputJSON > filename
+# Add the first line
 #sed '1s/^/{"startData":{"se_json":"\n/' filename
+# Append the last line
 #echo "}} >> filename
 
 # How the completed file would look
