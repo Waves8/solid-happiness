@@ -1,0 +1,37 @@
+# Some workflow stuff via curl sending JSON
+# may need to escape the double quotes in the file
+# potentially, may need to also escape the doublequotes around $data?
+#\"$data\"
+#sed -i 's/"/\\"/g' filename
+#data=$(cat filename)
+#curl -v --request POST --header "Content-Type: application/json" --data '{"startData":{"se_json":"$data"}}' "https://domain.workflowcloud.com/api/v1/workflow/published/WorkflowID/instances?token=TOKEN"
+
+# So it turns out that perhaps instead of trying to properly figure out character expansion and special characters
+# (No maybe, this is how I'm doing it)
+# Maybe just throw it all into a file with double quotes so that --data @file.json has it all
+# and the doublequotes within the query area are escaped, hurray for being lazy and dumb
+# (No may, this is how I'm doing it)
+# may consider creating file with the payload query
+# escape the doublequotes
+# then use sed to add the first line and last line to encapsulate the payload query
+
+# Create the file with the contents, filename
+#cat $logoutputJSON > filename
+# Add the first line
+#sed '1s/^/{"startData":{"se_json":"\n/' filename
+# Append the last line
+#echo "}} >> filename
+
+# How the completed file would look
+#{"startData":{"se_json":"
+#file_contents_with_doublequotes_escaped
+#"}}
+
+# Still need to write out the proper cron notation
+
+#!/bin/bash
+echo $logoutputJSON > filename1
+sed 's/"/\\"/g' filename1 > filename2
+sed -i '1s/^/{"startData":{"se_json":"\n/' filename2
+echo '"}}' >> filename2
+curl -v --request POST --header "Content-Type: application/json" --data @filename2 "https://domain.workflowcloud.com/api/v1/workflow/published/WorkflowID/instances?token=TOKEN"
