@@ -1,0 +1,14 @@
+# Inelegant, minor Hyper-V resource retrieval
+
+# Set up the list of hosts to retrieve information from
+$hostarray = @("HOST1","HOST2","HOST3", "HOSTN")
+
+# Get the VMs for each host
+$vmlist = foreach ($host in $hostarray) {get-vm -computername $host | select name,computername,state,generation,harddrives,memoryassigned,memoryminimum,memorymaximum,processorcount,vmid | sort -property name}
+
+# Get the drives for each guest on each host
+$vmdrives = foreach ($vm in $vmlist) {get-vhd -computername $vm.computername -vmid $vm.vmid | select computername,path,attached,vhdtype,filesize,@{label='SizeOnDisk(GB)';expression={$_.filesize/1gb -as [int]}},size,@{label='AllocatedSize(GB)';expression={$_.size/1gb -as [int]}}}
+
+# Export contents to CSV for some reason
+$vmlist | export-csv -NoTypeInformation \\PATH\TO\FILE1.csv
+$vmdrives | export-csv -NoTypeInformation \\PATH\TO\FILE2.csv
