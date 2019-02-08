@@ -1,0 +1,10 @@
+# Start of how to get all the groups in AD and their group members.
+# Specifically groups with the word "admin" in their name.
+# Changes or improvements could be:
+# parameters?
+# applying standard template
+# setting the results up into a variable
+# exporting to a csv
+# generating a report on counts of groups, members, empty groups, etc
+
+foreach ($i in (get-adgroup -filter 'name -like "*admin*"' -properties *)) {write-host Name: $i.name; write-host DistinguishedName: $i; write-host Description: $i.description; write-host Members:; get-adgroupmember $i | select samaccountname,name,objectclass | ft -AutoSize; write-host}
