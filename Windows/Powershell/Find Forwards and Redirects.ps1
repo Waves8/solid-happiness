@@ -1,4 +1,12 @@
 # Another useful tool I found
+# It's useful for on-prem, but a bit of a mess as it needs to handle the EWS/O365
+# Powershell throttling and also work on efficiency (like only pulling the 
+# mailboxes of Enabled users or something like that.
+# Things like these!
+# https://gist.github.com/Rick-2CA/97eee640eb669b69a63a3da6e834ff6c
+# https://code.msdn.microsoft.com/office/PowerShell-Merge-mailbox-e769c529
+# https://blogs.technet.microsoft.com/exchange/2015/11/02/running-powershell-cmdlets-for-large-numbers-of-users-in-office-365/
+# https://blogs.msdn.microsoft.com/exchangedev/2011/06/23/exchange-online-throttling-and-limits-faq/
 
 #====================================================
 # Get-InboxRule-External-and-RedirectTo.ps1
