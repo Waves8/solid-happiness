@@ -1,3 +1,8 @@
+# Horrible, where are my comments?
+# This is for generating the build string for installing IBM WinCollect Agent via CMD
+# Also, I ought to go back and update some of those IfElse statements so that
+# I just write the string ONCE and the variables just get updated for input...
+
 $counter = 0
 write-host -ForegroundColor Cyan Begin results of WinCollect Agent String builder
 write-host
