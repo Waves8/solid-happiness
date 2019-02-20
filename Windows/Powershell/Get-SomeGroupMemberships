@@ -1,0 +1,15 @@
+# Get the userlist (from a file, or wherever)
+$userlist = get-content \\PATH\TO\FILE
+
+# Format was in "FIRSTNAME LASTNAME", so splitting them for use in Get-ADUser filtering
+$useraccounts = foreach ($useritem in $userlist) {$filt = $useritem.split(); $fname = $filt[0]; $lname = $filt[1]; $tempuser = "$fname*$lname"; get-aduser -filter {name -like $tempuser} -properties memberof}
+
+# Iterate through the userlist and get group memberships (I was looking for specific groups)
+foreach ($useritem in $useraccounts) {
+write-host Name: $useritem.name
+write-host SAMAccountName: $useritem.samaccountname
+write-host ENABLED: $useritem.enabled
+write-host GROUP MEMBERSHIPS FOR $useritem.name
+$useritem.memberof | select-string -pattern '(Group1)|(Group2)|(Group3)|(Group4)'
+write-host
+}
