@@ -1,4 +1,10 @@
-#Alas I do not recall where I got this. Untested by me
+# Alas I do not recall where I got this. Untested by me
+# Actually, there are at least a couple different versions, both were in the same sub-Reddit post.
+# https://www.reddit.com/r/PowerShell/comments/34u4aq/no_native_way_for_powershell_to_list_available/
+# https://www.reddit.com/r/PowerShell/comments/9in5vc/how_do_you_automate_windows_updates_without_wsus/
+# Here's one from Boe Prox
+# https://gallery.technet.microsoft.com/scriptcenter/0dbfc125-b855-4058-87ec-930268f03285
+
 param([Parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)][string[]] $ComputerName,
       [int] $NumJobs = 5,
       [switch] $PSRemoting,
