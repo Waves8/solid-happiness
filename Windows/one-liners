@@ -1,3 +1,9 @@
+# Get Groups with admin in the name
+# Get the members of those groups
+# Output to STDOUT
+# Probably could use 
+foreach ($i in (get-adgroup -filter 'name -like "*admin*"' -properties *)) {write-host Name: $i.name; write-host DistinguishedName: $i; write-host Description: $i.description; write-host Members:; get-adgroupmember $i | select samaccountname,name,objectclass | ft -AutoSize; write-host}
+
 # From http://superuser.com/questions/333733/how-can-i-tell-which-domain-controller-im-authenticated-to
 # To determine computer/server DC use NLTEST
 nltest /dsgetdc:<domain_name>
