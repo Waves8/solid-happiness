@@ -6,7 +6,7 @@
 $counter = 0
 write-host -ForegroundColor Cyan Begin results of WinCollect Agent String builder
 write-host
-get-content c:\users\davisa-admin\logsources.txt | ForEach-Object{
+get-content $HOME\logsources.txt | ForEach-Object{
 $hostname = $_
 $counter++
 
@@ -59,4 +59,4 @@ write-host -ForegroundColor Cyan Verify IP of $hostname
 write-host =========
 write-host
 }
-} #| out-file c:\users\$USERNAME\wincollect_strings.txt
+} #| out-file $HOME\wincollect_strings.txt
