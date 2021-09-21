@@ -53,6 +53,7 @@ $profiles = get-childitem -path "\path\to\ovpnfiles" *vpn.ovpn | select Name
     }
 #>
 
+# This could be solved by switching to a [Switch] statement, with each option including a break
 # Individual If statements since I haven't cracked how to pass a variable to Call Operator so that capicli.exe does not reference variable as literal string
 # Each If statement will attempt to import a profile after successfully confirming it exists
     if (test-path -path "\path\to\avpn.ovpn")
