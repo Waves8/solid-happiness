@@ -1,10 +1,29 @@
 # Start of how to get all the groups in AD and their group members.
-# Specifically groups with the word "admin" in their name.
+# Specifically groups with the word $Name in their name.
 # Changes or improvements could be:
 # parameters?
-# applying standard template
+# applying standard Powershell template
 # setting the results up into a variable
 # exporting to a csv
 # generating a report on counts of groups, members, empty groups, etc
+# Breaking things down into functions (getting groups, getting group members of groups, further actions)
 
-foreach ($i in (get-adgroup -filter 'name -like "*admin*"' -properties *)) {write-host Name: $i.name; write-host DistinguishedName: $i; write-host Description: $i.description; write-host Members:; get-adgroupmember $i | select samaccountname,name,objectclass | ft -AutoSize; write-host}
+[CmdletBinding()]
+
+Param(
+$Name
+)
+[array]$groupResult
+
+
+foreach ($group in (Get-ADGroup -Filter 'name -like "*$Name*"' -Properties *)) {
+  $currentGroup = [PSCustomObject]@{
+    Name = $group.Name
+    DistinguishedName = $group.DistinguishedName
+    Description = $group.Description
+    Members = Get-ADGroupMember $group | select samaccountname,name,objectclass
+  }
+  $groupResult += $currentGroup
+}
+
+return $groupResult
