@@ -7,6 +7,7 @@
 # exporting to a csv
 # generating a report on counts of groups, members, empty groups, etc
 # Breaking things down into functions (getting groups, getting group members of groups, further actions)
+# Could consider Changing from an Array to a Hashtable as well as other ways of improving organization of the data
 
 [CmdletBinding()]
 
