@@ -10,20 +10,19 @@ param (
 )
 
 clear-host
-if ($userToAdd -eq "")
-{
-Write-Warning "Are you running the script from the new Administrator session? (y/n)"
-Write-Host "Choose N if this is the initial run."
-Write-Host "Choose Y if this is the Administrator session window."
-$scriptRun = Read-Host
+# Test if session is elevated via [Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544'
+# Returns false if not elevated, true if elevated
+if ($userToAdd -eq "") {
+  Write-Warning "Are you running the script from the new Administrator session? (y/n)"
+  Write-Host "Choose N if this is the initial run."
+  Write-Host "Choose Y if this is the Administrator session window."
+  $scriptRun = Read-Host
 }
-else
-{
+else {
     $scriptRun = "y"
 }
 
-if ($scriptRun -eq "y")
-{
+if ($scriptRun -eq "y") {
     Write-Host "Script running from elevated window as $(whoami)." -ForegroundColor Cyan
     if ($userToAdd -eq "")
     {
