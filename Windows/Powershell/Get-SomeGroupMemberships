@@ -1,15 +1,31 @@
-# Get the userlist (from a file, or wherever)
-$userlist = get-content \\PATH\TO\FILE
+[CmdletBinding()]
+
+Param (
+[string[]]$UserList
+)
+
+[array]$userArray = @()
 
 # Format was in "FIRSTNAME LASTNAME", so splitting them for use in Get-ADUser filtering
-$useraccounts = foreach ($useritem in $userlist) {$filt = $useritem.split(); $fname = $filt[0]; $lname = $filt[1]; $tempuser = "$fname*$lname"; get-aduser -filter {name -like $tempuser} -properties memberof}
-
-# Iterate through the userlist and get group memberships (I was looking for specific groups)
-foreach ($useritem in $useraccounts) {
-write-host Name: $useritem.name
-write-host SAMAccountName: $useritem.samaccountname
-write-host ENABLED: $useritem.enabled
-write-host GROUP MEMBERSHIPS FOR $useritem.name
-$useritem.memberof | select-string -pattern '(Group1)|(Group2)|(Group3)|(Group4)'
-write-host
+foreach ($userItem in $UserList) {
+  $filter = $useritem.split()
+  $firstName = $filter[0]
+  $lastName = $filter[1]
+  $tempUser = "$firstName*$lastName"
+  $currentUser = Get-ADUser -Filter {name -like $tempuser} -Property MemberOf
+  $userArray += $currentUser
 }
+
+return $currentUser
+
+<#
+# Iterate through $UserList and get group memberships (I was looking for specific groups)
+foreach ($user in $userAccounts) {
+  write-host Name: $user.Name
+  write-host SAMAccountName: $user.samaccountname
+  write-host ENABLED: $user.Enabled
+  #write-host GROUP MEMBERSHIPS FOR $user.Name
+  $user.memberof | select-string -pattern '(Group1)|(Group2)|(Group3)|(Group4)'
+  write-host
+}
+#>
